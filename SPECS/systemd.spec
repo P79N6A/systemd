@@ -7,7 +7,7 @@
 Name:           systemd
 Url:            http://www.freedesktop.org/wiki/Software/systemd
 Version:        219
-Release:        57%{?dist}.3
+Release:        57%{?dist}.3.1
 # For a breakdown of the licensing, see README
 License:        LGPLv2+ and MIT and GPLv2+
 Summary:        A System and Service Manager
@@ -657,6 +657,15 @@ Patch0615: 0615-core-Implement-timeout-based-umount-remount-limit.patch
 Patch0616: 0616-core-Implement-sync_with_progress.patch
 Patch0617: 0617-automount-handle-state-changes-of-the-corresponding-.patch
 
+# xenserver specific patches
+Patch2000: noapply-CA-117731.patch
+Patch2001: noapply-net-ifnames.patch
+Patch2002: noapply-disable-journal.patch
+Patch2003: noapply-journal-disable-kmsg.patch
+Patch2004: noapply-disable-acpi-events.patch
+Patch2005: noapply-allow-tag-nomatch.patch
+Patch2006: noapply-fix-mtd_probe-build.patch
+
 %global num_patches %{lua: c=0; for i,p in ipairs(patches) do c=c+1; end; print(c);}
 
 BuildRequires:  libcap-devel
@@ -819,6 +828,7 @@ Requires(pre):    /usr/bin/getent
 Requires(post):   systemd
 Requires(preun):  systemd
 Requires(postun): systemd
+Provides: xenserver-systemd-networkd
 
 %description networkd
 systemd-networkd is a system service that manages networks.
@@ -864,7 +874,10 @@ CONFIGURE_OPTS=(
     --enable-gtk-doc
     --enable-compat-libs
     --disable-sysusers
-    --disable-ldconfig
+# XenServer's build does not disable ldconfig
+# This can cause longer boot times,
+# but maybe there's a reason why they do that.
+#    --disable-ldconfig
     --enable-lz4
 %ifarch s390 s390x ppc %{power64} aarch64
     --disable-lto
@@ -1632,6 +1645,9 @@ fi
 %{_mandir}/man8/systemd-resolved.*
 
 %changelog
+* Mon Dec 10 2018 Samuel Verschelde <stormi-xcp@ylix.fr> - 219-57.3.1
+- apply XS patches on top of latest centos systemd
+
 * Fri Aug 31 2018 Lukas Nykryn <lnykryn@redhat.com> - 219-57.3
 - restart automounts unit on update (#1596241)
 
