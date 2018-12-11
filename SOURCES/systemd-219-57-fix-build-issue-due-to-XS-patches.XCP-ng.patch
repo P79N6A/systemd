@@ -1,0 +1,38 @@
+From 69a5464e01a80fb0f0f76232381a9fd45f33a6e6 Mon Sep 17 00:00:00 2001
+From: Fedora systemd team <systemd-maint@redhat.com>
+Date: Mon, 26 Jan 2015 08:37:36 +0000
+Subject: Fix patch to CA-159050 with systemd 219-57
+
+Note: except the Subject, the above information is bogus and just
+there to make git am happy.
+
+Patch "noapply-journal-disable-kmsg.patch" from Citrix removes
+code from systemd and that removal causes build warnings that
+are considered fatal due to the build with -Wall.
+
+This patch from Rushikesh Jadhav completes it to avoid the warnings.
+
+---
+ src/journal/journald-kmsg.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/src/journal/journald-kmsg.c       2018-12-10 19:35:23.699605881 +0000
++++ b/src/journal/journald-kmsg.c       2018-12-10 19:35:10.113823289 +0000
+@@ -112,7 +112,6 @@
+         char *identifier = NULL, *pid = NULL, *e, *f, *k;
+         uint64_t serial;
+         size_t pl;
+-        char *kernel_device = NULL;
+
+         assert(s);
+         assert(p);
+@@ -205,9 +204,6 @@
+                 if (!m)
+                         break;
+
+-                if (startswith(m, "_KERNEL_DEVICE="))
+-                        kernel_device = m + 15;
+-
+                 IOVEC_SET_STRING(iovec[n++], m);
+                 z++;
+

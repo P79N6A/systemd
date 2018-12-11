@@ -666,6 +666,9 @@ Patch2004: noapply-disable-acpi-events.patch
 Patch2005: noapply-allow-tag-nomatch.patch
 Patch2006: noapply-fix-mtd_probe-build.patch
 
+# XCP-ng patches
+Patch10000: systemd-219-57-fix-build-issue-due-to-XS-patches.XCP-ng.patch
+
 %global num_patches %{lua: c=0; for i,p in ipairs(patches) do c=c+1; end; print(c);}
 
 BuildRequires:  libcap-devel
@@ -1647,6 +1650,7 @@ fi
 %changelog
 * Mon Dec 10 2018 Samuel Verschelde <stormi-xcp@ylix.fr> - 219-57.3.1
 - apply XS patches on top of latest centos systemd
+- add a patch to fix build failure due to one on these patches
 
 * Fri Aug 31 2018 Lukas Nykryn <lnykryn@redhat.com> - 219-57.3
 - restart automounts unit on update (#1596241)
